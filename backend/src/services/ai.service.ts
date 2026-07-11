@@ -125,18 +125,14 @@ async function processBatch(batch: any[], batchNo: number) {
         JSON.stringify(response.usageMetadata, null, 2)
       );
 
-      let text = "";
+      let text = response.text ?? "";
 
-      if (typeof response.text === "function") {
-        text = response.text();
-      } else if (typeof response.text === "string") {
-        text = response.text;
-      } else if (response.candidates?.length) {
-        text =
-          response.candidates[0]?.content?.parts
-            ?.map((part: any) => part.text || "")
-            .join("") || "";
-      }
+if (!text && response.candidates?.length) {
+  text =
+    response.candidates[0]?.content?.parts
+      ?.map((part: any) => part.text ?? "")
+      .join("") ?? "";
+}
 
       console.log("\n========== RAW GEMINI RESPONSE ==========");
       console.log(text);
