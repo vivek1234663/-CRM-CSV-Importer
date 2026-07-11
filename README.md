@@ -167,16 +167,3 @@ Processes CSV records and maps them into CRM fields using AI.
 
 ---
 
-## Author
-
-**Vivek Srivastava**
-
-GitHub: https://github.com/vivek1234663
-
-LinkedIn: https://www.linkedin.com/in/vivek-srivastava-121998248/
-
----
-
-## License
-
-This project is created for the **GrowEasy AI CSV Importer Assignment**.
