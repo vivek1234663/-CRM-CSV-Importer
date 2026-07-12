@@ -125,7 +125,11 @@ async function processBatch(batch: any[], batchNo: number) {
         JSON.stringify(response.usageMetadata, null, 2)
       );
 
+
       let text = response.text ?? "";
+
+     let text = response.text ?? "";
+ // fb52926 (Fix CORS for Vercel)
 
 if (!text && response.candidates?.length) {
   text =
