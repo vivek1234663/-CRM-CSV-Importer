@@ -29,19 +29,16 @@ function extractJSON(text: string) {
     .replace(/```/g, "")
     .trim();
 
-  // Direct JSON
   try {
     return JSON.parse(text);
   } catch {}
 
-  // JSON Array
   const arrayMatch = text.match(/\[[\s\S]*\]/);
 
   if (arrayMatch) {
     return JSON.parse(arrayMatch[0]);
   }
 
-  // JSON Object
   const objectMatch = text.match(/\{[\s\S]*\}/);
 
   if (objectMatch) {
@@ -125,18 +122,16 @@ async function processBatch(batch: any[], batchNo: number) {
         JSON.stringify(response.usageMetadata, null, 2)
       );
 
-
+      // ✅ Get response text
       let text = response.text ?? "";
 
-     let text = response.text ?? "";
- // fb52926 (Fix CORS for Vercel)
-
-if (!text && response.candidates?.length) {
-  text =
-    response.candidates[0]?.content?.parts
-      ?.map((part: any) => part.text ?? "")
-      .join("") ?? "";
-}
+      // ✅ Fallback if response.text is empty
+      if (!text && response.candidates?.length) {
+        text =
+          response.candidates[0]?.content?.parts
+            ?.map((part: any) => part.text ?? "")
+            .join("") ?? "";
+      }
 
       console.log("\n========== RAW GEMINI RESPONSE ==========");
       console.log(text);
@@ -154,14 +149,12 @@ if (!text && response.candidates?.length) {
 
       console.log(`📤 Output Records : ${parsed.length}`);
 
-      // Warn if counts don't match
       if (parsed.length !== batch.length) {
         console.warn(
           `⚠️ Record mismatch! Input=${batch.length}, Output=${parsed.length}`
         );
       }
 
-      // Normalize all records to include the expected fields
       const normalized = parsed.map((row: any) => ({
         created_at: row.created_at ?? "",
         name: row.name ?? "",
@@ -203,6 +196,7 @@ if (!text && response.candidates?.length) {
 
   return [];
 }
+
 /**
  * Process complete CSV in batches
  */
@@ -220,7 +214,6 @@ export async function processWithAI(rows: any[]) {
 
   for (let i = 0; i < rows.length; i += BATCH_SIZE) {
     const batchNo = Math.floor(i / BATCH_SIZE) + 1;
-
     const batch = rows.slice(i, i + BATCH_SIZE);
 
     console.log(
@@ -249,16 +242,13 @@ export async function processWithAI(rows: any[]) {
         )}/${rows.length} records`
       );
 
-      // Small delay to reduce rate-limit risk
       await sleep(500);
-
     } catch (err: any) {
       console.error(`❌ Batch ${batchNo} Failed`);
       console.error(err.message);
 
       failedBatches.push(batchNo);
 
-      // Continue with next batch
       continue;
     }
   }
