@@ -9,51 +9,47 @@ dotenv.config();
 
 const app = express();
 
-// Allowed Frontend URLs
 const allowedOrigins = [
   "http://localhost:3000",
+  "https://crm-csv-importer-kqgm.vercel.app",
   "https://crm-csv-importer-8941.vercel.app",
-  "https://crm-csv-importer-kqqm.vercel.app",
 ];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow Postman, Render health checks, server-to-server requests
-      if (!origin) {
-        return callback(null, true);
-      }
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      console.log("❌ Blocked by CORS:", origin);
-
-      return callback(new Error("Not allowed by CORS"));
+      console.log("Blocked Origin:", origin);
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 204,
   })
 );
+
+// Handle preflight requests
+app.options("*", cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health Check
 app.get("/", (_req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
     message: "🚀 GrowEasy Backend Running...",
   });
 });
 
-// Routes
 app.use("/api", uploadRoutes);
 app.use("/api", processRoutes);
 
-// 404 Handler
 app.use((_req, res) => {
   res.status(404).json({
     success: false,
@@ -61,4 +57,4 @@ app.use((_req, res) => {
   });
 });
 
-export default app;
+export default app; 
