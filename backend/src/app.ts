@@ -13,8 +13,8 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://crm-csv-importer-kqgm.vercel.app",
   "https://crm-csv-importer-8941.vercel.app",
+  "https://crm-csv-importer-fwow.vercel.app", // ✅ Add this
 ];
-
 const corsOptions: cors.CorsOptions = {
   origin(origin, callback) {
     if (!origin) return callback(null, true);
